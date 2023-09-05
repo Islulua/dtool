@@ -55,29 +55,42 @@ elif DEBUG_LEVEL == 0:
 else:
   msg_level = logging.INFO
 
+
 class logger:
-  def __init__(self, name):
-    logging.basicConfig(filename='network_debug.log', filemode='w', level=msg_level, style='{')
-    self.logger = logging.getLogger(name)
-    self.formatter = logging.Formatter(fmt=FMT, datefmt=DATEFMT)
-    self.log_filename = '{0}{1}.log'.format(PATH, strftime("%Y-%m-%d"))
+    def __init__(self, name, log_level=logging.INFO, log_to_file=True, log_to_console=False):
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(log_level)
+        self.log_format = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-    # self.logger.addHandler(self.get_file_handler(self.log_filename))
-    self.logger.addHandler(self.get_console_handler())
-    # set default level
-    self.logger.setLevel(logging.DEBUG)
+        if log_to_file:
+            self.log_to_file()
+        if log_to_console:
+            self.log_to_console()
 
-  # handler to file
-  def get_file_handler(self, filename):
-    filehandler = logging.FileHandler(filename, encoding="utf-8")
-    filehandler.setFormatter(self.formatter)
-    return filehandler
+    def log_to_file(self, log_file='dtool.log'):
+        file_handler = logging.FileHandler(log_file, mode='w')
+        file_handler.setFormatter(self.log_format)
+        self.logger.addHandler(file_handler)
 
-  # handler to console
-  def get_console_handler(self):
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(self.formatter)
-    return console_handler
+    def log_to_console(self):
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(self.log_format)
+        self.logger.addHandler(console_handler)
+
+    def debug(self, message):
+        self.logger.debug(message)
+
+    def info(self, message):
+        self.logger.info(message)
+
+    def warning(self, message):
+        self.logger.warning(message)
+
+    def error(self, message):
+        self.logger.error(message)
+
+    def critical(self, message):
+        self.logger.critical(message)
 
 def main():
   sys.exit(_main(sys.argv[1:]))

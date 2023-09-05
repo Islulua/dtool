@@ -4,6 +4,7 @@ import argparse
 import pandas as pd
 from ..main import register_parser
 from ..main import logger
+from ..utils import numpy_to_dataframe 
 
 my_logger = logger("make_tensor").logger
 
@@ -25,7 +26,7 @@ def add_data_analysis_parser(subparsers):
   parser.add_argument('--pattern', type=str, help='generate data using a pattern')
 
 
-def zero_one(d1, d2, d3, d4):
+def zero_one(shape):
   return (d1 + d2 + d3 + d4) % 2
 def d3(d1, d2, d3, d4):
   return d4
@@ -38,35 +39,25 @@ def d0(d1, d2, d3, d4):
 
 def create_numpy_array(shape, random=False, fixed=None, pattern=None):
     if pattern is not None:
-      if len(shape) != 4:
-        raise ValueError("Pattern Mode just support 4d shape")
-      if pattern == "d3":
-        return np.fromfunction(d3, shape)
-      elif pattern == "d2":
-        return np.fromfunction(d2, shape)
-      elif pattern == "d1":
-        return np.fromfunction(d1, shape)
-      elif pattern == "d0":
-        return np.fromfunction(d0, shape)
-      elif pattern == "zero_one":
-        return np.fromfunction(zero_one, shape)
-      else:
-        raise ValueError("Pattern Mode not support")
+      # TODO: dingtao.lu
+      my_logger.error("Pattern Mode not support now")
+      raise ValueError("Pattern Mode not support")
     elif fixed is not None:
+      my_logger.info("create fixed data, value:{}".format(fixed))
       return np.full(shape, fixed)
     elif random:
+      my_logger.info("create random data")
       return np.random.random(shape)
     else:
       raise ValueError("Invalid arguments provided.")
 
 def main(args):
+  my_logger.info("shape={}".format(args.shape))
   data = create_numpy_array(args.shape, args.random, args.fixed, args.pattern)
-  # data_row_index = pd.MultiIndex.from_product([range(s) for s in data.shape[:-1]], names=['d_dim1', 'd_dim2', 'd_dim3'])
-  # data_col_index = pd.Index(['col{}'.format(i) for i in range(data.shape[-1])], name='d_cols')
-  # data_2d = data.reshape(-1, data.shape[-1])
-  # data_2d = np.around(data_2d, decimals=2)
-  # data_df = pd.DataFrame(data_2d, index=data_row_index, columns=data_col_index)
-  # data_df.to_csv("dtool.log", mode='w', header=True, index=True, sep='\t')
+  
+  df = numpy_to_dataframe(data)
+  df.to_csv("dtool.log", mode='a', sep='\t')
+
   np.save('data.npy', data)
 
 
