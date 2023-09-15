@@ -17,8 +17,8 @@ def parse_shape(shape_str):
 
 @register_parser
 def add_data_analysis_parser(subparsers):
-  """ Include parser for 'print data' subcommand """
-  parser = subparsers.add_parser("make_tensor", help="make tesor input")
+  """ Include parser for 'make tensor' subcommand """
+  parser = subparsers.add_parser("make_tensor", help="make tensor input")
   parser.set_defaults(func=main)
   parser.add_argument('shape', type=parse_shape, help='shape of the numpy array')
   parser.add_argument('--random', action='store_true', help='generate random data')

@@ -3,7 +3,7 @@ import numpy as np
 from .main import logger
 my_logger = logger("utils").logger
 
-def numpy_to_dataframe(data, row_index=None, col_index=None, depth_index=None, time_index=None, extra_index=None):
+def numpy_to_dataframe(data):
     # 获取每个维度的大小
     shape = data.shape
     row_names = [f'dim_{i}' for i in range(len(shape) - 1)]
@@ -17,6 +17,3 @@ def numpy_to_dataframe(data, row_index=None, col_index=None, depth_index=None, t
     data_df = pd.DataFrame(data_2d, index=data_row_index, columns=data_col_index)
 
     return data_df
-
-def print_df(df):
-  
